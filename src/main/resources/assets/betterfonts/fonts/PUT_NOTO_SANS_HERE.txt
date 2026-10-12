@@ -1,0 +1,3 @@
+Place NotoSans-Regular.ttf (and optionally NotoSans-Bold.ttf) in this folder.
+Noto Sans is licensed under SIL OFL 1.1 - bundle the license text alongside it.
+Download: https://fonts.google.com/noto/specimen/Noto+Sans
