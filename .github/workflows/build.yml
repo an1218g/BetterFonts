@@ -39,8 +39,8 @@ jobs:
         with:
           name: betterfonts-${{ matrix.mc }}
           path: |
-            build/${{ matrix.mc }}/libs/*.jar
-            !build/${{ matrix.mc }}/libs/*-sources.jar
+            build/*/libs/*.jar
+            !build/*/libs/*-sources.jar
 
       # v1.2.3 のようなタグを push したときだけ、このバージョンの jar を Modrinth に公開する
       - name: Publish ${{ matrix.mc }} to Modrinth
@@ -50,7 +50,7 @@ jobs:
           modrinth-id: ${{ env.MODRINTH_ID }}
           modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
           files: |
-            build/${{ matrix.mc }}/libs/!(*-sources).jar
+            build/*/libs/!(*-sources).jar
           loaders: fabric
           game-versions: ${{ matrix.game_versions }}
           version-type: release     # 安定したら release に変える
