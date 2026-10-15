@@ -1,0 +1,73 @@
+name: build
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  pull_request:
+  workflow_dispatch:
+
+env:
+  MODRINTH_ID: ipNWWxix   # ← Modrinth のプロジェクト ID (または slug) に書き換える
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false          # 1 バージョンが失敗しても他は最後まで回す
+      matrix:
+        include:
+          # mc: -Pmc= に渡す値 / game_versions: Modrinth に登録する対応バージョン
+          - { mc: '26.3',    game_versions: '26.3' }
+          - { mc: '26.2',    game_versions: '26.2' }
+          - { mc: '26.1',    game_versions: "26.1\n26.1.1\n26.1.2" }
+          - { mc: '1.21.11', game_versions: '1.21.11' }
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 25      # 26.x は Java 25 必須。1.21.11 も 25 でビルドできる (release=21 指定済み)
+
+      - uses: gradle/actions/setup-gradle@v4
+
+      - name: Build ${{ matrix.mc }}
+        run: ./gradlew build -Pmc=${{ matrix.mc }} --no-daemon
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: betterfonts-${{ matrix.mc }}
+          path: |
+            build/${{ matrix.mc }}/libs/*.jar
+            !build/${{ matrix.mc }}/libs/*-sources.jar
+
+      # v1.2.3 のようなタグを push したときだけ、このバージョンの jar を Modrinth に公開する
+      - name: Publish ${{ matrix.mc }} to Modrinth
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: Kir-Antipov/mc-publish@v3.3
+        with:
+          modrinth-id: ${{ env.MODRINTH_ID }}
+          modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
+          files: |
+            build/${{ matrix.mc }}/libs/!(*-sources).jar
+          loaders: fabric
+          game-versions: ${{ matrix.game_versions }}
+          version-type: release     # 安定したら release に変える
+          changelog: ${{ github.event.head_commit.message }}
+
+  # 同じタグで GitHub の Release にも全 jar を添付する (不要なら丸ごと消してよい)
+  release:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: jars
+          merge-multiple: true
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: jars/*.jar
