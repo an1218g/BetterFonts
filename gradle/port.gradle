@@ -1,0 +1,24 @@
+// src/main/java (26.3 の書き方) を、対象バージョン用に変換して build/<mc>/port/java に出力し、それをコンパイルする。
+//   使う側が先に project.ext.portRules (ルールのリスト) を定義しておくこと。
+//   置き換えでは済まないファイルは src/<mc>/java に同じパスで置くと、変換後の出力を丸ごと上書きする。
+// ソースを直すときは常に src/main を編集する (build/ 以下は毎回作り直される)。
+
+def portOut = layout.buildDirectory.dir('port/java')
+def rules = project.ext.portRules
+def overlay = "src/${project.ext.minecraft_overlay}/java"
+
+tasks.register('portSources', Sync) {
+    group = 'build'
+    description = '26.3 向けソースを対象バージョン用に変換する'
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
+    from('src/main/java') {
+        filter { String line ->
+            rules.each { rule -> line = line.replaceAll(rule[0], rule[1]) }
+            line
+        }
+    }
+    from(overlay)
+    into portOut
+}
+
+sourceSets.main.java.setSrcDirs([tasks.named('portSources')])

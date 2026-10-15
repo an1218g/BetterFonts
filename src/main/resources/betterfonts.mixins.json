@@ -1,0 +1,8 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "dev.betterfonts.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "client": ["GuiGraphicsExtractorMixin", "FontManagerMixin", "FontShadowMixin", "FontTextureMixin"],
+  "injectors": { "defaultRequire": 0 }
+}

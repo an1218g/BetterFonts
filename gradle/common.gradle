@@ -1,0 +1,26 @@
+// 両バージョン共通の設定。各 build-<mc>.gradle から apply from で読み込む。
+// 使う側が ext に minecraft_version / minecraft_dep / loader_min / java_min / java_release を定義しておくこと。
+
+version = "${project.mod_version}+${project.ext.minecraft_version}"
+group = project.maven_group
+base { archivesName = project.archives_base_name }
+
+// バージョンごとに出力先を分ける (切り替えてもビルド結果が上書きされない)
+layout.buildDirectory.set(file("build/${project.ext.minecraft_version}"))
+
+processResources {
+    def props = [version       : project.version,
+                 minecraft_dep : project.ext.minecraft_dep,
+                 loader_min    : project.ext.loader_min,
+                 java_min      : project.ext.java_min]
+    inputs.properties(props)
+    filesMatching("fabric.mod.json") { expand props }
+}
+
+tasks.withType(JavaCompile).configureEach { options.release = project.ext.java_release }
+
+java {
+    withSourcesJar()
+    sourceCompatibility = JavaVersion.toVersion(project.ext.java_release)
+    targetCompatibility = JavaVersion.toVersion(project.ext.java_release)
+}

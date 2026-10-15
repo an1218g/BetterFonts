@@ -1,0 +1,25 @@
+plugins {
+    id 'net.fabricmc.fabric-loom' version '1.17-SNAPSHOT'
+    id 'maven-publish'
+}
+
+// 普通の ext { ... } ではなく、project.ext に直接流し込んで初期化する
+project.ext.minecraft_version = '26.3'
+project.ext.minecraft_dep     = '~26.3'
+project.ext.loader_version    = '0.19.5'
+project.ext.loader_min        = '0.19.5'
+project.ext.fabric_api_version = '0.160.5+26.3'
+project.ext.java_min          = '25'
+project.ext.java_release      = 25
+
+// 変数を確定させてから common.gradle を読み込む
+apply from: 'gradle/common.gradle'
+
+repositories { }
+
+dependencies {
+    // project.ext から確実に引っ張る
+    minecraft "com.mojang:minecraft:${project.ext.minecraft_version}"
+    implementation "net.fabricmc:fabric-loader:${project.ext.loader_version}"
+    implementation "net.fabricmc.fabric-api:fabric-api:${project.ext.fabric_api_version}"
+}

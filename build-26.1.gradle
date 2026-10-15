@@ -1,0 +1,30 @@
+plugins {
+    id 'net.fabricmc.fabric-loom' version '1.17-SNAPSHOT'
+    id 'maven-publish'
+}
+
+// 26.1 / 26.1.1 / 26.1.2 向けに 1 本でビルドする (最新の 26.1.2 でコンパイルし、依存は ~26.1)
+project.ext.minecraft_version = '26.1.2'
+project.ext.minecraft_dep     = '~26.1'
+project.ext.loader_version    = '0.19.5'
+project.ext.loader_min        = '0.19.5'
+project.ext.fabric_api_version = '0.155.3+26.1.2'
+project.ext.java_min          = '25'
+project.ext.java_release      = 25
+
+apply from: 'gradle/common.gradle'
+
+// 26.3 との差: blaze3d.textures / writeToTexture が長い形 / 画面を開くのは setScreen
+apply from: 'gradle/rules.gradle'
+project.ext.portRules = project.ext.RULES.blaze3d + project.ext.RULES.writeToTextureLong + project.ext.RULES.setScreenOld
+project.ext.minecraft_overlay = '26.1'
+apply from: 'gradle/port.gradle'
+
+repositories { }
+
+dependencies {
+    // 26.x は難読化なし: mappings 行は書かない (書くとエラー)。implementation でよい
+    minecraft "com.mojang:minecraft:${project.ext.minecraft_version}"
+    implementation "net.fabricmc:fabric-loader:${project.ext.loader_version}"
+    implementation "net.fabricmc.fabric-api:fabric-api:${project.ext.fabric_api_version}"
+}

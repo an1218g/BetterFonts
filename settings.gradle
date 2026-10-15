@@ -1,0 +1,14 @@
+pluginManagement {
+    repositories {
+        maven { url = 'https://maven.fabricmc.net/' }
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
+rootProject.name = 'betterfonts'
+
+// ビルド対象の Minecraft バージョン: ./gradlew build -Pmc=1.21.11  (省略時は gradle.properties の mc)
+def mc = providers.gradleProperty('mc').getOrElse('26.3')
+if (!file("build-${mc}.gradle").exists())
+    throw new GradleException("未対応のバージョン: ${mc} (build-<version>.gradle がありません)")
+rootProject.buildFileName = "build-${mc}.gradle"

@@ -1,0 +1,30 @@
+// ソース変換ルールの部品。src/main は 26.3 の書き方で、ここから必要なものを組み合わせて各バージョン用に変換する。
+// 書式: [正規表現, 置換後]。上から順に適用される。
+project.ext.RULES = [
+    // 26.3 で renderpearl に移動した。26.2 以前は com.mojang.blaze3d.textures
+    blaze3d: [
+        [/com\.mojang\.renderpearl\.api\.textures\./, 'com.mojang.blaze3d.textures.'],
+        [/com\/mojang\/renderpearl\/api\/textures\//, 'com/mojang/blaze3d/textures/'],
+    ],
+    // CommandEncoder.writeToTexture: 26.2 以降は短い形 / 26.1 以前は幅・高さ・読み出し位置つき
+    writeToTextureLong: [
+        [/writeToTexture\(texture, img, 0, 0, x, y\)/, 'writeToTexture(texture, img, 0, 0, x, y, w, h, 0, 0)'],
+    ],
+    // 画面を開く: 26.2 以降は setScreenAndShow / 26.1 以前は setScreen
+    setScreenOld: [
+        [/\bsetScreenAndShow\b/, 'setScreen'],
+    ],
+    // 難読化ありの 1.21.x: GuiGraphicsExtractor → GuiGraphics、extract* → render*
+    gui1211: [
+        [/\bGuiGraphicsExtractor\b/,            'GuiGraphics'],
+        [/\bg\.text\(/,                         'g.drawString('],
+        [/"text\(L/,                            '"drawString(L'],              // Mixin のメソッド記述子
+        [/\bextractWidgetRenderState\b/,        'renderWidget'],
+        [/\bextractContents\b/,                 'renderContents'],
+        [/\bextractRenderState\b/,              'render'],
+    ],
+    fabricKeybinding1211: [
+        [/net\.fabricmc\.fabric\.api\.client\.keymapping\.v1\.KeyMappingHelper/, 'net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper'],
+        [/\bKeyMappingHelper\.registerKeyMapping\(/, 'KeyBindingHelper.registerKeyBinding('],
+    ],
+]

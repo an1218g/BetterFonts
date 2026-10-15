@@ -1,0 +1,32 @@
+plugins {
+    id 'fabric-loom' version '1.18-SNAPSHOT'
+    id 'maven-publish'
+}
+
+project.ext.minecraft_version = '1.21.11'
+project.ext.minecraft_dep     = '1.21.11'
+project.ext.loader_version    = '0.18.2'
+project.ext.loader_min        = '0.18.1'
+project.ext.fabric_api_version = '0.141.3+1.21.11'
+project.ext.java_min          = '21'
+project.ext.java_release      = 21
+
+apply from: 'gradle/common.gradle'
+
+// src/main (26.3 の書き方) を 1.21.11 用に変換してからコンパイルする
+apply from: 'gradle/rules.gradle'
+project.ext.portRules = project.ext.RULES.gui1211 + project.ext.RULES.fabricKeybinding1211 +
+        project.ext.RULES.blaze3d + project.ext.RULES.writeToTextureLong + project.ext.RULES.setScreenOld
+project.ext.minecraft_overlay = '1.21.11'
+apply from: 'gradle/port.gradle'
+
+repositories { }
+
+dependencies {
+    minecraft "com.mojang:minecraft:${project.ext.minecraft_version}"
+    mappings loom.officialMojangMappings()
+    // 1.21.11 は難読化あり (remap)。Mod 依存は modImplementation にしないと
+    // Intermediary 名 (class_304 等) のまま読まれ、Mixin も見つからなくなる。
+    modImplementation "net.fabricmc:fabric-loader:${project.ext.loader_version}"
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.ext.fabric_api_version}"
+}
