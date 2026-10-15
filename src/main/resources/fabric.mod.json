@@ -4,7 +4,7 @@
   "version": "${version}",
   "name": "Better Fonts",
   "description": "Use Google Fonts in Minecraft with smooth, high-quality text rendering.",
-  "authors": ["You"],
+  "authors": ["anag1218 - あなごん"],
   "license": "MIT",
   "environment": "client",
   "entrypoints": { "client": ["dev.betterfonts.BetterFontsMod"] },
