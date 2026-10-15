@@ -10,7 +10,7 @@
 ## Technical Details
 * **Side:** Client-side only
 * **Mod Loader:** Fabric
-* **Minecraft Version:** 26.3
+* **Minecraft Version:** 1.21.11-26.3
 
 ## Screenshots
 *Show off your beautiful UI here! Add some Before/After screenshots to show the dramatic change.*
