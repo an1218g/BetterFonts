@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
 
 env:
-  MODRINTH_ID: ipNWWxix   # ← Modrinth のプロジェクト ID (または slug) に書き換える
+  MODRINTH_ID: ipNWWxix   # ← Modrinth のプロジェクト ID (または slug)
 
 jobs:
   build:
@@ -50,13 +50,14 @@ jobs:
           modrinth-id: ${{ env.MODRINTH_ID }}
           modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
           files: |
-            build/*/libs/!(*-sources).jar
+            build/*/libs/*.jar
+            !build/*/libs/*-sources.jar
           loaders: fabric
           game-versions: ${{ matrix.game_versions }}
-          version-type: release     # 安定したら release に変える
+          version-type: release
           changelog: ${{ github.event.head_commit.message }}
 
-  # 同じタグで GitHub の Release にも全 jar を添付する (不要なら丸ごと消してよい)
+  # 同じタグで GitHub の Release にも全 jar を添付する
   release:
     if: startsWith(github.ref, 'refs/tags/v')
     needs: build
@@ -66,8 +67,13 @@ jobs:
     steps:
       - uses: actions/download-artifact@v4
         with:
-          path: jars
-          merge-multiple: true
-      - uses: softprops/action-gh-release@v2
+          path: artifacts
+
+      - name: Display structure of downloaded files
+        run: ls -R artifacts
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
         with:
-          files: jars/*.jar
+          files: artifacts/**/*.jar
+          generate_release_notes: true
