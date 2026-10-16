@@ -13,7 +13,6 @@
 * **Minecraft Version:** 1.21.11-26.3
 
 ## Screenshots
-*Show off your beautiful UI here! Add some Before/After screenshots to show the dramatic change.*
 
 ![Before](https://cdn.modrinth.com/data/cached_images/9a2227055a460df3fc569acbf89bdab867f59d7d.png)
 
