@@ -18,3 +18,5 @@
 ![Before](https://cdn.modrinth.com/data/cached_images/9a2227055a460df3fc569acbf89bdab867f59d7d.png)
 
 ![After](https://cdn.modrinth.com/data/cached_images/177a719b8aa8776cb08a623dca62b2be9b75c798.png)
+
+*I’ve lost access to my account, so I’ve decided to continue here from now on (lol).*
